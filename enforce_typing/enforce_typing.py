@@ -63,10 +63,6 @@ def _check_typing_types(
         expected_type: str
             The datatype type hinted at the
             function definition.
-
-        func_arg_types: dict
-            The type hints applied to the variables
-            of the function.
     """
     try:
         rx = re.search(r"typing\.([A-z].*)(\[.*])", expected_type)
@@ -95,7 +91,7 @@ def _check_typing_types(
                 )
             else:
                 raise EnforcedTypingError(
-                    f"Argument '{arg_name}' is a {type(arg_value).__qualname__} "
+                    f"'{arg_name}' is a {type(arg_value).__qualname__} "
                     f"but should be a {expected_type}"
                 )
 
@@ -108,7 +104,7 @@ def _check_typing_types(
                 )
             else:
                 raise EnforcedTypingError(
-                    f"Argument '{arg_name}' is a {type(arg_value).__qualname__} "
+                    f"'{arg_name}' is a {type(arg_value).__qualname__} "
                     f"but should be a {expected_type}"
                 )
 
@@ -255,7 +251,7 @@ def _check_return_types(
     if "return" in func_arg_types:
         if type(func_arg_types["return"]).__qualname__ == "_GenericAlias":
             _check_typing_types(
-                arg_name="return",
+                arg_name="return value",
                 arg_type=return_type,
                 arg_value=return_value,
                 expected_type=(str(func_arg_types["return"])),
@@ -263,7 +259,7 @@ def _check_return_types(
 
         else:
             _check_builtin_types(
-                arg_name="return",
+                arg_name="return value",
                 arg_type=return_type,
                 func_arg_types=func_arg_types,
             )
