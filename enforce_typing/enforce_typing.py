@@ -8,8 +8,8 @@ class EnforcedTypingError(TypeError):
 
 
 def _check_argument_types(
-    func_args: dict,
-    func_arg_types: dict,
+    func_args: Dict[any, any],
+    func_arg_types: Dict[any, any],
 ):
     """
     Check that the variables passed into a function are of the correct type.
@@ -206,7 +206,7 @@ def _check_typing_tuple(
 def _check_builtin_types(
     arg_name: str,
     arg_type: any,
-    func_arg_types: dict,
+    func_arg_types: Dict[any, any],
 ):
     """
     Test to see if type hints used with stdlib types are correct.
@@ -230,7 +230,7 @@ def _check_builtin_types(
 
 
 def _check_return_types(
-    func_arg_types: dict,
+    func_arg_types: Dict[any, any],
     return_type: any,
     return_value: any,
 ):
