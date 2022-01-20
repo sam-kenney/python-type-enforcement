@@ -1,6 +1,7 @@
 """Module used to enforce strict typing for Python functions."""
 import re
-from typing import Dict, List, Tuple, get_type_hints
+import typing
+from typing import Dict, List, Tuple
 
 
 class EnforcedTypingError(TypeError):
@@ -270,7 +271,7 @@ def enforce_typing(func):
 
     def type_checker(*args, **kwargs):
         """Test argument vs value types."""
-        func_type_hints = get_type_hints(func)
+        func_type_hints = typing.get_type_hints(func)
         arguments = kwargs.copy()
         arguments.update(zip(func.__code__.co_varnames, args))
 
