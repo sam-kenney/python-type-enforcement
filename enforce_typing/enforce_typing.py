@@ -1,5 +1,7 @@
 """Module used to enforce strict typing for Python functions."""
+import importlib
 import re
+import sys
 import typing
 from typing import Dict, List, Tuple
 
@@ -115,7 +117,22 @@ def _check_typing_types(
 
 def _split_typing_sub_types(sub_types: str) -> List[any]:
     """Convert sub_types from a string to a list."""
-    return eval(sub_types)
+    cleaned_sub_types: List[any] = []
+    name_space: Dict[str, any] = {}
+
+    for item in sub_types.replace("[", "").replace("]", "").replace(" ", "").split(","):
+        try:
+            lib = importlib.__import__(item.split(".")[0])
+            name_space.__setitem__(lib.__name__, lib)
+            cleaned_sub_types.append(item)
+
+        except ModuleNotFoundError:
+            cleaned_sub_types.append(item)
+
+    _types = []
+    for _type in cleaned_sub_types:
+        _types.append(eval(_type, sys.modules, name_space))
+    return _types
 
 
 def _check_typing_dict(arg_name: str, arg_value: Dict[any, any], sub_types: List[any]):
