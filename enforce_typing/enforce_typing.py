@@ -43,7 +43,7 @@ def _check_argument_types(
 
 def _check_typing_types(
     arg_name: str,
-    arg_type: str,
+    arg_type: any,
     arg_value: any,
     expected_type: str,
 ):

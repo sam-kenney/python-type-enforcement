@@ -51,20 +51,17 @@ bar((1,2,3))
 ```
 
 ### Strictness
-#### str
-Will throw an error if the value passed in to the function is not a `string`, or subclass of `string`.
+#### **Built-in Types**
+For the built-in types, such as `str`, `int`, `float` `bool`, `dict`, and `list`, the `EnforcedTypingError` will be thrown if the annotated type does not match the type of the variable at runtime.
 
-### int
-Will throw an error if the value passed in to the function is not an `int`, or subclass of `int`.
+#### **Typing Types**
+For the advanced type hints available through the `typing` module, such as `Dict`, `List`, and `Tuple`, the annotation's sub-type (such as `List[str]`) will also be checked against the contents of the variable. 
 
-### float
-Will throw an error if the value passed in to the function is not a `float`, or subclass of `float`.
+In the case of `List[str]`, each item in the list will validated, if any items are not a `str`, the `EnforcedTypingError` will be thrown.
 
-### list / typing.List
-Standard `list`s will only check for type equality. If you are using `typing` annotations, it will check that the sub-types are correct too. For example, annotating `List[str]` will check that each item in the `list` is a `str`.
+For `Dict`, the key and values of each pair in the `dict` will be compared to the sub-types in the function's annotations. For example, `Dict[int, str]` will make sure that each key is an `int`, and each value is a `str`.
 
-### dict / typing.Dict
-Standard `dict`s will only check for type equality. If you are using `typing` annotations, it will check that the sub-types are correct too. For example, annotating `Dict[str, int]` will check that each key-value pair in the dictionary have a `str` key, and an `int` value.
+For `Tuple`, as well as checking that each item in the `tuple` is the correct type, as per the function annotation, but also that the passed in `tuple` is the expected length. For example, `Tuple[str, int]`, would raise an error if you passed in `("Hi", 1, 2)`, as the passed in value has too many items. You may loosely type this by using the `Tuple[str, ...]` syntax, should you not know how long the `tuple` will be.
 
-### tuple / typing.Tuple
-Standard `tuple`s will only check for type equality. If you are using `typing` annotations, it will check that the sub-types are correct too. For example, annotating `Tuple[str, int, int]` will check that the passed in `tuple` is has the correct number of values, as well as each value in each position is the correct data type.
+#### **Any**
+The use of `any` in your type annotations is not supported.
