@@ -61,7 +61,7 @@ In the case of `List[str]`, each item in the list will validated, if any items a
 
 For `Dict`, the key and values of each pair in the `dict` will be compared to the sub-types in the function's annotations. For example, `Dict[int, str]` will make sure that each key is an `int`, and each value is a `str`.
 
-For `Tuple`, as well as checking that each item in the `tuple` is the correct type, as per the function annotation, but also that the passed in `tuple` is the expected length. For example, `Tuple[str, int]`, would raise an error if you passed in `("Hi", 1, 2)`, as the passed in value has too many items. You may loosely type this by using the `Tuple[str, ...]` syntax, should you not know how long the `tuple` will be.
+For `Tuple`, as well as checking that each item in the `tuple` is the correct type, as per the function annotation, but also that the passed in `tuple` is the expected length. For example, `Tuple[str, int]`, would raise an error if you passed in `("Hi", 1, 2)`, as the passed in value has too many items.
 
 #### **User Defined Types**
 You may use your own `Classes` as type hints in your functions. For example.
@@ -78,5 +78,5 @@ def foo(c: List[MyClass]) -> None:
     [print(i) for i in c]
 ```
 
-#### **Any**
-The use of `any` in your type annotations is not supported.
+#### **Any and Ellipsis**
+The use of `any`, or `...` in your type annotations is not supported.
