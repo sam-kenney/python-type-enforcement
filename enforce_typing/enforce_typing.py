@@ -251,7 +251,7 @@ def _check_return_types(
     if "return" in func_arg_types:
         if type(func_arg_types["return"]).__qualname__ == "_GenericAlias":
             _check_typing_types(
-                arg_name="return value",
+                arg_name="return",
                 arg_type=return_type,
                 arg_value=return_value,
                 expected_type=(str(func_arg_types["return"])),
@@ -259,7 +259,7 @@ def _check_return_types(
 
         else:
             _check_builtin_types(
-                arg_name="return value",
+                arg_name="return",
                 arg_type=return_type,
                 func_arg_types=func_arg_types,
             )
