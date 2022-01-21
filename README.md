@@ -1,5 +1,5 @@
-# Python Staticly Typed Functions
-Enforce type hints in functions by raising an `EnforcedTypingError` if there is a mismatch between type-hints and provided data types.
+# Enforce Python Type Hints
+Enforce type hints in functions and classes by raising an `EnforcedTypingError` if there is a mismatch between type-hints and provided data types.
 
 
 ## Creating an environment
@@ -10,7 +10,7 @@ To create your environment, type `virtualenv venv --prompt "(your-env) "`. Once 
 
 ## Installation
 ### Using the library
-*   Install this library by running `pip install git+ssh://github.com/mr-strawberry66/python-static-type-checking`. 
+*   Install this library by running `pip install git+https://github.com/mr-strawberry66/python-type-enforcement`. 
 *   Import it to your code by adding `from enforce_typing import enforce_typing` to your file.
 
 ### Developing for this library
