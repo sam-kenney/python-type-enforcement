@@ -56,7 +56,7 @@ bar((1,2,3))
 This decorator supports both standard `Classes` and `dataclasses`. You may also add the decorator to any functions within a `Class`.
 ```py
 from dataclasses import dataclass
-from typing import 
+from typing import Dict, List
 
 from enforce_typing import enforce_typing
 
