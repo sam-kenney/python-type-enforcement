@@ -29,7 +29,7 @@ from enforce_typing import enforce_typing
 
 
 @enforce_typing
-def foo(a: Dict[int: str]) -> str:
+def foo(a: Dict[int, str]) -> str:
     return a.get(1)
 
 foo({1: "Hello"})
@@ -70,7 +70,7 @@ class User:
 
     @enforce_typing
     @staticmethod
-    def foo(a: Dict[int: str]) -> str:
+    def foo(a: Dict[int, str]) -> str:
         return a.get(1)
 
 
@@ -86,7 +86,7 @@ class User:
 
     @enforce_typing
     @staticmethod
-    def foo(a: Dict[int: str]) -> str:
+    def foo(a: Dict[int, str]) -> str:
         return a.get(1)
 ```
 
