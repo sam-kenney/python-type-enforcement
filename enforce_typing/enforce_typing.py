@@ -1,5 +1,6 @@
 """Module used to enforce strict typing for Python functions."""
 import importlib
+import inspect
 import re
 import sys
 import typing
@@ -283,14 +284,25 @@ def _check_return_types(
             )
 
 
-def enforce_typing(func):
+def enforce_typing(func: callable):
     """Enforce variable types."""
 
     def type_checker(*args, **kwargs):
         """Test argument vs value types."""
-        func_type_hints = typing.get_type_hints(func)
         arguments = kwargs.copy()
-        arguments.update(zip(func.__code__.co_varnames, args))
+        if inspect.isclass(func):
+            try:
+                func_type_hints = typing.get_type_hints(func)
+                arguments.update(zip(func.__annotations__, args))
+            except AttributeError:
+                func_type_hints = typing.get_type_hints(func.__init__)
+                if func_type_hints.get("return", None):
+                    func_type_hints["return"] = func
+                arguments.update(zip(func_type_hints, args))
+
+        else:
+            func_type_hints = typing.get_type_hints(func)
+            arguments.update(zip(func.__code__.co_varnames, args))
 
         _check_argument_types(
             func_args=arguments,

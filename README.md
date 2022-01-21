@@ -20,6 +20,8 @@ To create your environment, type `virtualenv venv --prompt "(your-env) "`. Once 
 *Please ensure to create your environment before you execute any of the installation commands*
 
 ## Using the decorator
+The decorator can be used with both `functions` and `classes`, but must be the first decorator listed for each `function` or `class`. 
+### Functions
 ```py
 from typing import Dict, Tuple
 
@@ -48,6 +50,44 @@ bar((1,2))
 bar((1,2,3))
 # Will throw an EnforcedTypingError
 # as the tuple is too large.
+```
+
+### Classes
+This decorator supports both standard `Classes` and `dataclasses`. You may also add the decorator to any functions within a `Class`.
+```py
+from dataclasses import dataclass
+from typing import 
+
+from enforce_typing import enforce_typing
+
+# dataclass implementation
+@enforce_typing
+@dataclass
+class User:
+    name: str
+    age: int
+    roles: List[str]
+
+    @enforce_typing
+    @staticmethod
+    def foo(a: Dict[int: str]) -> str:
+        return a.get(1)
+
+
+# Standard implementation
+@enforce_typing
+class User:
+    def __init__(
+        self, name: str, age: int, roles: List[str]
+    ) -> None:
+        self.name = name
+        self.age = age
+        self.roles = roles
+
+    @enforce_typing
+    @staticmethod
+    def foo(a: Dict[int: str]) -> str:
+        return a.get(1)
 ```
 
 ### Strictness
@@ -79,4 +119,4 @@ def foo(c: List[MyClass]) -> None:
 ```
 
 #### **Any and Ellipsis**
-The use of `any`, or `...` in your type annotations is not supported.
+The use of `any`, `typing.Any`, or `...` in your type annotations is not supported.
