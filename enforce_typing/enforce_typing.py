@@ -4,8 +4,6 @@ from __future__ import annotations
 import inspect
 import typing
 
-# from typing import Dict, List, Tuple
-
 from .check_builtin_types import check_builtin_types
 from .check_typing_types import CheckTyping
 
