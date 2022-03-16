@@ -1,16 +1,15 @@
 """Module to enforce strict typing for functions decorated using the Typing module."""
 from __future__ import annotations
+from cmath import exp
 
 import importlib
 import re
 import sys
 
-from simple_repr import SimpleRepr
-
 from .exceptions import EnforcedTypingError
 
 
-class CheckTyping(SimpleRepr):
+class CheckTyping:
     """Check type annotations for functions decorated with Typing type hints."""
 
     def __init__(
@@ -80,7 +79,7 @@ class CheckTyping(SimpleRepr):
             hint.
         """
         for i, item in enumerate(self.arg_value):
-            if type(item) != sub_types[0]:
+            if not isinstance(item, sub_types[0]):
                 raise EnforcedTypingError(
                     f"'{self.arg_name}' has a {type(item).__qualname__} at index {i}"
                     f", but should be {sub_types[0].__qualname__}."
@@ -147,10 +146,43 @@ class CheckTyping(SimpleRepr):
 
     def _raise_error(self):
         """Raise an EnforcedTypingError."""
+        print(self.expected_type)
         raise EnforcedTypingError(
             f"'{self.arg_name}' is a {self.arg_type.__qualname__}"
             f", but should be {self.expected_type.__qualname__}."
         )
+
+    def _get_types(self):
+        """Return the base and sub_types of the argument."""
+        rx = re.search(r"typing\.([A-z].*)(\[.*])", self.expected_type)
+        base_type: str = rx.group(1)
+        sub_types: list[any] = self._split_typing_sub_types(rx.group(2))
+
+        return (base_type, sub_types)
+
+    def _test_tuple(self, sub_types):
+        """Raise an exception if the argument is not a tuple."""
+        self.__setattr__("expected_type", tuple)
+        if self.arg_type == tuple:
+            self._check_typing_tuple(sub_types=sub_types)
+        else:
+            self._raise_error()
+
+    def _test_dict(self, sub_types):
+        """Raise an exception if the argument is not a dict."""
+        self.__setattr__("expected_type", dict)
+        if self.arg_type == dict:
+            self._check_typing_dict(sub_types=sub_types)
+        else:
+            self._raise_error()
+
+    def _test_list(self, sub_types):
+        """Raise an exception if the argument is not a list."""
+        self.__setattr__("expected_type", list)
+        if self.arg_type == list:
+            self._check_typing_list(sub_types=sub_types)
+        else:
+            self._raise_error()
 
     def validate(self):
         """
@@ -162,27 +194,16 @@ class CheckTyping(SimpleRepr):
             hint.
         """
         try:
-            rx = re.search(r"typing\.([A-z].*)(\[.*])", self.expected_type)
-            base_type: str = rx.group(1)
-            sub_types: list[any] = self._split_typing_sub_types(rx.group(2))
-
+            base_type, sub_types = self._get_types()
             if base_type == "Dict":
-                if self.arg_type == dict:
-                    self._check_typing_dict(sub_types=sub_types)
-                else:
-                    self._raise_error()
+                self._test_dict(sub_types)
 
             elif base_type == "List":
-                if self.arg_type == list:
-                    self._check_typing_list(sub_types=sub_types)
-                else:
-                    self._raise_error()
+                self._test_list(sub_types)
 
             elif base_type == "Tuple":
-                if self.arg_type == tuple:
-                    self._check_typing_tuple(sub_types=sub_types)
-                else:
-                    self._raise_error()
+                self._test_tuple(sub_types)
 
-        except AttributeError:
+        except AttributeError as err:
+            print(err)
             return

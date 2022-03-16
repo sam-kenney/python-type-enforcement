@@ -3,7 +3,8 @@ from typing import Dict, List, Tuple
 
 import pytest
 
-from ..enforce_typing import EnforcedTypingError, enforce_typing
+from ..enforce_typing import enforce_typing
+from ..exceptions import EnforcedTypingError
 
 
 def test_enforce_typing_Dict():
