@@ -9,8 +9,11 @@ def lint(session):
         "flake8",
         "flake8-docstrings",
         "flake8-import-order",
+        "pylint",
     )
-    session.run("flake8", "--max-complexity=9")
+    session.install("-r", "dev-requirements.txt")
+    session.run("flake8", "--max-complexity=8")
+    session.run("pylint", "./enforce_typing/")
 
 
 @nox.session
@@ -24,4 +27,11 @@ def format(session):
 def test(session):
     """Run tests."""
     session.install("pytest")
-    session.run("pytest")
+    session.install("pytest-cov")
+    session.run(
+        "pytest",
+        "--cov=enforce_typing",
+        "enforce_typing/tests/",
+        "--cov-report",
+        "term-missing",
+    )
