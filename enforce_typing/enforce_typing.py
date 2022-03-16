@@ -24,7 +24,7 @@ def _check_argument_types(
             The type hints applied to the variables
             of the function.
     """
-    for arg_name, arg_value in [(key, value) for key, value in func_args.items()]:
+    for arg_name, arg_value in list(func_args.items()):
         if arg_name in func_arg_types:
             if type(func_arg_types[arg_name]).__qualname__ == "_GenericAlias":
                 CheckTyping(

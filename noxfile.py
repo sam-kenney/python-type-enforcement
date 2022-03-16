@@ -11,6 +11,7 @@ def lint(session):
         "flake8-import-order",
         "pylint",
     )
+    session.install("-r", "dev-requirements.txt")
     session.run("flake8", "--max-complexity=8")
     session.run("pylint", "./enforce_typing/")
 

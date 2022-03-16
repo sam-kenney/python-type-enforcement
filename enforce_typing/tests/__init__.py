@@ -1,1 +1,1 @@
-"""Expose tests for enforce_typing."""
+"""Expose enforce_typing module to testing."""

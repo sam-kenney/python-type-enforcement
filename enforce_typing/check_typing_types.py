@@ -1,6 +1,5 @@
 """Module to enforce strict typing for functions decorated using the Typing module."""
 from __future__ import annotations
-from cmath import exp
 
 import importlib
 import re
@@ -106,14 +105,14 @@ class CheckTyping:
             )
 
         for i, (item, sub_type) in enumerate(zip(self.arg_value, sub_types)):
-            if type(item) != sub_type:
+            if not isinstance(item, sub_type):
                 raise EnforcedTypingError(
                     f"'{self.arg_name}' has a {type(item).__qualname__} at index {i}"
                     f", but should be {sub_type.__qualname__}."
                 )
 
     @staticmethod
-    def _split_typing_sub_types(sub_types: str) -> list[any]:
+    def split_typing_sub_types(sub_types: str) -> list[any]:
         """
         Convert sub_types from a string to a list.
 
@@ -141,7 +140,7 @@ class CheckTyping:
 
         _types = []
         for _type in cleaned_sub_types:
-            _types.append(eval(_type, sys.modules, name_space))
+            _types.append(eval(_type, sys.modules, name_space))  # pylint: disable=W0123
         return _types
 
     def _raise_error(self):
@@ -154,9 +153,9 @@ class CheckTyping:
 
     def _get_types(self):
         """Return the base and sub_types of the argument."""
-        rx = re.search(r"typing\.([A-z].*)(\[.*])", self.expected_type)
-        base_type: str = rx.group(1)
-        sub_types: list[any] = self._split_typing_sub_types(rx.group(2))
+        result = re.search(r"typing\.([A-z].*)(\[.*])", self.expected_type)
+        base_type: str = result.group(1)
+        sub_types: list[any] = self.split_typing_sub_types(result.group(2))
 
         return (base_type, sub_types)
 
@@ -204,6 +203,5 @@ class CheckTyping:
             elif base_type == "Tuple":
                 self._test_tuple(sub_types)
 
-        except AttributeError as err:
-            print(err)
+        except AttributeError:
             return
