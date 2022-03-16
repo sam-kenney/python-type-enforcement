@@ -1,4 +1,10 @@
 # Enforce Python Type Hints
+[![Build Status](https://app.travis-ci.com/mr-strawberry66/python-type-enforcement.svg?branch=main)](https://app.travis-ci.com/github/mr-strawberry66/python-type-enforcement/builds)
+[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
+![License](https://img.shields.io/github/license/mr-strawberry66/python-type-enforcement)
+[![Updates](https://pyup.io/repos/github/mr-strawberry66/python-repr-generation/shield.svg)](https://pyup.io/repos/github/mr-strawberry66/python-type-enforcement/)
+
+
 Enforce type hints in functions and classes by raising an `EnforcedTypingError` if there is a mismatch between type-hints and provided data types.
 
 
