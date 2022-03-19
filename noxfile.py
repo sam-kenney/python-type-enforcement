@@ -31,7 +31,6 @@ def test(session):
     session.run(
         "pytest",
         "--cov=enforce_typing",
-        "enforce_typing/tests/",
         "--cov-report",
         "term-missing",
     )

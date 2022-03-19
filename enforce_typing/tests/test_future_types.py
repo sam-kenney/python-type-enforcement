@@ -1,6 +1,5 @@
-"""Test enforce typing module on Typing type hints."""
-from typing import Dict, List, Tuple
-
+"""Test enforce typing module on __future__ type hints."""
+from __future__ import annotations
 import pytest
 
 from .test_classes import User
@@ -10,10 +9,10 @@ from ..exceptions import EnforcedTypingError
 
 
 def test_enforce_typing_dict():
-    """Test the enforce_typing decorator with a Typing Dict."""
+    """Test the enforce_typing decorator with a __future__ dict."""
 
     @enforce_typing
-    def test_dict(arg_a: Dict[str, int]) -> int:
+    def test_dict(arg_a: dict[str, int]) -> int:
         return list(arg_a.values())[0]
 
     assert test_dict({"index": 1})
@@ -25,10 +24,10 @@ def test_enforce_typing_dict():
 
 
 def test_enforce_typing_list():
-    """Test the enforce_typing decorator with a Typing List."""
+    """Test the enforce_typing decorator with a __future__ list."""
 
     @enforce_typing
-    def test_list(arg_a: List[int]) -> List[str]:
+    def test_list(arg_a: list[int]) -> list[str]:
         return [str(i) for i in arg_a]
 
     assert test_list([1, 1, 1]) == ["1", "1", "1"]
@@ -40,10 +39,10 @@ def test_enforce_typing_list():
 
 
 def test_enforce_typing_tuple():
-    """Test the enforce_typing decorator with a Typing Tuple."""
+    """Test the enforce_typing decorator with a __future__ tuple."""
 
     @enforce_typing
-    def test_tuple(arg_a: Tuple[int, int]) -> Tuple[int, str]:
+    def test_tuple(arg_a: tuple[int, int]) -> tuple[int, str]:
         return (arg_a[0], str(arg_a[1]))
 
     assert test_tuple((4, 1)) == (4, "1")
@@ -57,14 +56,14 @@ def test_enforce_typing_tuple():
 
 
 def test_return_typing_tuple():
-    """Test the enforce_typing decorator returns a Typing Tuple."""
+    """Test the enforce_typing decorator returns a __future__ tuple."""
 
     @enforce_typing
-    def test_return_tuple(arg_a: Tuple[int, int]) -> Tuple[str, str]:
+    def test_return_tuple(arg_a: tuple[int, int]) -> tuple[str, str]:
         return (str(arg_a[0]), str(arg_a[1]))
 
     @enforce_typing
-    def test_fail_return_tuple(arg_a: Tuple[int, int]) -> Tuple[str, str]:
+    def test_fail_return_tuple(arg_a: tuple[int, int]) -> tuple[str, str]:
         return arg_a[0]
 
     assert test_return_tuple((4, 1)) == ("4", "1")
@@ -74,14 +73,14 @@ def test_return_typing_tuple():
 
 
 def test_return_typing_list():
-    """Test the enforce_typing decorator returns a Typing List."""
+    """Test the enforce_typing decorator returns a __future__ list."""
 
     @enforce_typing
-    def test_return_list(arg_a: List[int]) -> List[str]:
+    def test_return_list(arg_a: list[int]) -> list[str]:
         return [str(arg_a[0]), str(arg_a[1])]
 
     @enforce_typing
-    def test_fail_return_list(arg_a: List[int]) -> List[str]:
+    def test_fail_return_list(arg_a: list[int]) -> list[str]:
         return arg_a[0]
 
     assert test_return_list([4, 1]) == ["4", "1"]
@@ -91,14 +90,14 @@ def test_return_typing_list():
 
 
 def test_return_typing_dict():
-    """Test the enforce_typing decorator returns a Typing Dict."""
+    """Test the enforce_typing decorator returns a __future__ dict."""
 
     @enforce_typing
-    def test_return_dict(arg_a: Dict[int, str]) -> Dict[str, str]:
+    def test_return_dict(arg_a: dict[int, str]) -> dict[str, str]:
         return {str(key): str(val) for key, val in arg_a.items()}
 
     @enforce_typing
-    def test_fail_return_dict(arg_a: Dict[int, str]) -> Dict[int, str]:
+    def test_fail_return_dict(arg_a: dict[int, str]) -> dict[int, str]:
         return arg_a[1]
 
     assert test_return_dict({1: "1"}) == {"1": "1"}
@@ -121,7 +120,7 @@ def test_validate():
         arg_name="arg_a",
         arg_type=list,
         arg_value=[1, 1, 1],
-        expected_type="List[int]",
+        expected_type="list[int]",
     )
     assert test_typing_input.validate() is None
 
@@ -129,22 +128,22 @@ def test_validate():
         arg_name="arg_a",
         arg_type=list,
         arg_value=[1, 1, 1],
-        expected_type="typing.List[str]",
+        expected_type="typing.list[str]",
     )
     with pytest.raises(EnforcedTypingError):
         test_bad_input.validate()
 
 
 def test_split_typing_sub_types():
-    """Test the function to extract sub-types from a Typing type hint."""
+    """Test the function to extract sub-types from a __future__ type hint."""
     assert CheckTyping.split_typing_sub_types(
-        str(Dict[str, User]).split("typing.Dict")[1],
-    ) == [str, User]
+        str([str.__qualname__, User.__qualname__]),
+    ) == ["str", "User"]
 
     assert CheckTyping.split_typing_sub_types(
-        str(List[str]).split("typing.List")[1],
-    ) == [str]
+        str(list.__qualname__),
+    ) == [list]
 
     assert CheckTyping.split_typing_sub_types(
-        str(Tuple[str, User, int]).split("typing.Tuple")[1],
-    ) == [str, User, int]
+        str(dict.__qualname__),
+    ) == [dict]
