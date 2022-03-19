@@ -2,10 +2,10 @@
 from __future__ import annotations
 
 import inspect
-import typing
+import re
 
 from .check_builtin_types import check_builtin_types
-from .check_typing_types import CheckTyping
+from .check_future_or_typing_types import CheckTyping
 
 
 def _check_argument_types(
@@ -26,7 +26,12 @@ def _check_argument_types(
     """
     for arg_name, arg_value in list(func_args.items()):
         if arg_name in func_arg_types:
-            if type(func_arg_types[arg_name]).__qualname__ == "_GenericAlias":
+
+            if type(
+                func_arg_types[arg_name]
+            ).__qualname__ == "_GenericAlias" or re.match(
+                r"(^[a-z]*\[.*\]$)", str(func_arg_types[arg_name])
+            ):
                 CheckTyping(
                     arg_name=arg_name,
                     arg_type=type(arg_value),
@@ -62,7 +67,9 @@ def _check_return_types(
             The returned value of the function.
     """
     if "return" in func_arg_types:
-        if type(func_arg_types["return"]).__qualname__ == "_GenericAlias":
+        if type(func_arg_types["return"]).__qualname__ == "_GenericAlias" or re.match(
+            r"(^[a-z]*\[.*\]$)", str(func_arg_types["return"])
+        ):
             CheckTyping(
                 arg_name="return",
                 arg_type=return_type,
@@ -86,17 +93,17 @@ def enforce_typing(func: callable):
         arguments = kwargs.copy()
         if inspect.isclass(func):
             try:
-                func_type_hints = typing.get_type_hints(func)
-                arguments.update(zip(func.__annotations__, args))
+                func_type_hints = func.__annotations__
+                arguments.update(zip(func_type_hints, args))
 
             except AttributeError:
-                func_type_hints = typing.get_type_hints(func.__init__)
+                func_type_hints = func.__init__.__annotations__
                 if func_type_hints.get("return", None):
                     func_type_hints["return"] = func
                 arguments.update(zip(func_type_hints, args))
 
         else:
-            func_type_hints = typing.get_type_hints(func)
+            func_type_hints = func.__annotations__
             arguments.update(zip(func.__code__.co_varnames, args))
 
         _check_argument_types(

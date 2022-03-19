@@ -1,11 +1,10 @@
 """Module to enforce strict typing for functions decorated using the Typing module."""
 from __future__ import annotations
 
-import importlib
 import re
-import sys
 
 from .exceptions import EnforcedTypingError
+from .type_parser import data_type_from_string
 
 
 class CheckTyping:
@@ -72,6 +71,7 @@ class CheckTyping:
             sub_types: List[any]
                 The specified type within the
                 typing List type hint.
+
         Raises: EnforcedTypingError
             If the data does not match
             the datatype of the type
@@ -130,22 +130,17 @@ class CheckTyping:
         for item in (
             sub_types.replace("[", "").replace("]", "").replace(" ", "").split(",")
         ):
-            try:
-                lib = importlib.__import__(item.split(".")[0])
-                name_space.__setitem__(lib.__name__, lib)
-                cleaned_sub_types.append(item)
+            cleaned_sub_types.append(
+                data_type_from_string(
+                    data_type=item,
+                    name_space=name_space,
+                )
+            )
 
-            except ModuleNotFoundError:
-                cleaned_sub_types.append(item)
-
-        _types = []
-        for _type in cleaned_sub_types:
-            _types.append(eval(_type, sys.modules, name_space))  # pylint: disable=W0123
-        return _types
+        return cleaned_sub_types
 
     def _raise_error(self):
         """Raise an EnforcedTypingError."""
-        print(self.expected_type)
         raise EnforcedTypingError(
             f"'{self.arg_name}' is a {self.arg_type.__qualname__}"
             f", but should be {self.expected_type.__qualname__}."
@@ -153,7 +148,9 @@ class CheckTyping:
 
     def _get_types(self):
         """Return the base and sub_types of the argument."""
-        result = re.search(r"typing\.([A-z].*)(\[.*])", self.expected_type)
+        print(self.expected_type)
+        expected_type = self.expected_type.split("typing.")
+        result = re.search(r"([A-z].*)(\[.*])", expected_type[len(expected_type) - 1])
         base_type: str = result.group(1)
         sub_types: list[any] = self.split_typing_sub_types(result.group(2))
 
@@ -194,13 +191,13 @@ class CheckTyping:
         """
         try:
             base_type, sub_types = self._get_types()
-            if base_type == "Dict":
+            if base_type.lower() == "dict":
                 self._test_dict(sub_types)
 
-            elif base_type == "List":
+            elif base_type.lower() == "list":
                 self._test_list(sub_types)
 
-            elif base_type == "Tuple":
+            elif base_type.lower() == "tuple":
                 self._test_tuple(sub_types)
 
         except AttributeError:

@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 from .exceptions import EnforcedTypingError
+from .type_parser import data_type_from_string
 
 
 def check_builtin_types(
@@ -28,8 +29,15 @@ def check_builtin_types(
         the datatype of the type
         hint.
     """
-    if not issubclass(arg_type, func_arg_types[arg_name]):
+    if isinstance(func_arg_types[arg_name], str):
+        data_type = func_arg_types[arg_name]
+
+    else:
+        data_type = str(func_arg_types[arg_name].__qualname__)
+
+    received_arg_type = data_type_from_string(data_type)
+    if not issubclass(arg_type, received_arg_type):
         raise EnforcedTypingError(
-            f"'{arg_name}' is a {arg_type.__qualname__}"
-            f", but should be {func_arg_types[arg_name].__qualname__}."
+            f"'{arg_name}' is a {arg_type}"
+            f", but should be {func_arg_types[arg_name]}."
         )
