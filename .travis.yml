@@ -8,4 +8,4 @@ install:
     - pip install -r dev-requirements.txt
 
 script:
-    - nox
+    - nox -s lint -s check_formatting -s test

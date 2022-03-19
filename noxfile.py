@@ -17,7 +17,14 @@ def lint(session):
 
 
 @nox.session
-def format(session):
+def check_formatting(session):
+    """Check formatting using black."""
+    session.install("black")
+    session.run("black", ".", "--check")
+
+
+@nox.session
+def reformat(session):
     """Format using black."""
     session.install("black")
     session.run("black", ".")
